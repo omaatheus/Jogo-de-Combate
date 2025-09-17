@@ -1,5 +1,5 @@
 #Personagem: Classe Mae
-
+import random
 #Heroi controlado pelo usuario
 
 #Inimigo: adversario do usuario
@@ -28,7 +28,7 @@ class Personagem:
             self.__vida = 0
 
     def atacar(self, alvo):
-        dano = self.__nivel * 2
+        dano = random.randint(self.getNivel() * 2, self.getNivel() * 4)
         alvo.receberAtaque(dano)
         print(f"{self.getNome()} atacou {alvo.getNome()} e causou {dano} de dano!")
 
@@ -46,9 +46,9 @@ class Heroi(Personagem):
         return f"{super().exibirDetalhes()}\nHabilidade: {self.getHabilidade()}"
 
     def ataqueEspecial(self, alvo):
-        dano = self.getNivel() * 5
+        dano = random.randint(self.getNivel() * 5, self.getNivel() * 8)
         alvo.receberAtaque(dano)
-        print(f"\n{self.getNome()} atacou com seu poder de {self.getHabilidade()}!")
+        print(f"\n{self.getNome()} atacou com seu poder de {self.getHabilidade()} e causou {dano} de dano!")
 
 class Inimigo(Personagem):
     def __init__(self, nome, vida, nivel, tipo):
@@ -66,12 +66,14 @@ class Jogo:
     """Classe que orquestra o Jogo"""
     def __init__(self):
         self.heroi = Heroi("Rodolfo", 100, 5, "Força")
-        self.inimigo = Inimigo("Luzas", 50, 3, "Ave")
+        self.inimigo = Inimigo("Luzas", 100, 3, "Ave")
 
     def iniciarBatalha(self):
             """"Gestão da Batalha"""
             print(f"|====== Iniciando Batalha... ======|")
+            rodada = 0
             while self.heroi.getVida() > 0 and self.inimigo.getVida() > 0:
+                rodada += 1
                 print("\nDetalhes dos Personagens:")
                 print(self.heroi.exibirDetalhes())
                 print(self.inimigo.exibirDetalhes())
@@ -82,7 +84,10 @@ class Jogo:
                 if escolha == "1":
                     self.heroi.atacar(self.inimigo)
                 elif escolha == "2":
-                    self.heroi.ataqueEspecial(self.inimigo)
+                    if rodada > 3:
+                        self.heroi.ataqueEspecial(self.inimigo)
+                    else:
+                        print(f"\n|====== O Herói ainda não carregou sua habilidade de {self.heroi.getHabilidade()} ======|")
                 else:
                     print("\n|====== Escolha Inválida, escolha novamente ======|")
 
